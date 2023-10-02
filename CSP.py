@@ -1,4 +1,6 @@
 # CSP Assignment
+# Original code by Håkon Måløy
+# Updated by Xavier Sánchez Díaz
 
 import copy
 from itertools import product as prod
@@ -18,7 +20,7 @@ class CSP:
 
         self.solution = None #CSP solution after backtrack search
         self.backtracks_called = 0 #number of backtrack() function calls
-        self.number_of_failures = 0
+        self.backtrack_failures = 0
         
     def add_variable(self, name: str, domain: list):
         """Add a new variable to the CSP.
@@ -164,12 +166,12 @@ class CSP:
         should get reduced as AC-3 discovers illegal values.
 
         """
-        self.backtracks_called += 1 #
+        self.backtracks_called += 1 #function called
 
         if all(len(values) == 1 for values in assignment.values()):
             return assignment  # Return the completed assignment
 
-        var = self.select_unassigned_variable(assignment)
+        var = self.select_unassigned_variable(assignment) 
 
         for value in assignment[var]:
 
@@ -183,7 +185,9 @@ class CSP:
 
                 if result is not None:
                     return result  
-
+                
+        #Failed backtrack:
+        self.backtrack_failures += 1
         return None
 
     def select_unassigned_variable(self, assignment):
@@ -192,6 +196,7 @@ class CSP:
         in 'assignment' that have not yet been decided, i.e. whose list
         of legal values has a length greater than one.
         """
+        #looping through the assignment to find values greater than 1:
         for var, values in assignment.items():
             if len(values) > 1:
                 return var
@@ -206,9 +211,9 @@ class CSP:
         is the initial queue of arcs that should be visited.
         """
 
-        #following the AC3 algorithm from the book:
+        #Following AC-3
         while queue:
-            i, j = queue.pop(0) 
+            i, j = queue.pop(0) #removing from queue
 
             if self.revise(assignment, i, j):
                 if not assignment[i]:
@@ -217,7 +222,6 @@ class CSP:
                 for k in self.get_all_neighboring_arcs(i):
                     if k[1] != j: 
                         queue.append(k)
-
         return True 
 
     def revise(self, assignment, i, j):
@@ -231,17 +235,17 @@ class CSP:
         """
         revised = False
 
+        #checking for legal variables
         for value_i in assignment[i][:]:
             legal = False
 
             for value_j in assignment[j]:
                 if (str(value_i), str(value_j)) in self.constraints[i][j]:
-                    legal = True
+                    legal = True #legal variable found
                     break
 
             if not legal:
-                assignment[i].remove(value_i)
+                assignment[i].remove(value_i) #removing value_i as no legal placement found.
                 revised = True
 
-        
         return revised

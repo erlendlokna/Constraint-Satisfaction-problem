@@ -42,13 +42,14 @@ class Sudoku(CSP):
 
     def solve(self, output_filename): 
         t0 = time.time()
-        self.backtracking_search()
+        self.backtracking_search() #running backtrack search.
         t1 = time.time()
         
-        print(f"\nsolution for {self.filename}\n")
+        print(f"\nsolution for {self.filename}\n") #printing and saving solution as image. 
         self.print_solution()
         self.solution_as_img(output_filename)
         print(f"backtracks called: {self.backtracks_called}")
+        print(f"backtrack failures: {self.backtrack_failures}")
         print(f"compute time: {round(t1- t0,3)} seconds")
 
 
@@ -102,20 +103,20 @@ class Sudoku(CSP):
         # Draw grid lines with thicker borders
         line_width = 1  # Increase this value for thicker borders
         border_width = 3
-        for row in range(1, 9):
+        for row in range(0, 10):
             line_y = row * cell_size[1]
             draw.line(
                 [(0, line_y), (image_size[0], line_y)],
-                fill="black",
-                width=border_width if row in [3, 6] else line_width,
+                fill="black" if row in [0, 3, 6, 9] else "grey",
+                width=border_width if row in [0, 3, 6, 9] else line_width,
             )
 
-        for col in range(1, 9):
+        for col in range(0, 10):
             line_x = col * cell_size[0]
             draw.line(
                 [(line_x, 0), (line_x, image_size[1])],
-                fill="black",
-                width=border_width if col in [3, 6] else line_width,
+                fill="black" if col in [0, 3, 6, 9] else "grey",
+                width=border_width if col in [0, 3, 6, 9] else line_width,
             )
 
         # Save the image
@@ -150,20 +151,21 @@ class MapCSP(CSP):
         
         print(f"solution: \n {self.solution}")
         print(f"backtracks called: {self.backtracks_called}\n")
+        print(f"backtrack failures: {self.backtrack_failures}")
         print(f"compute time {round(t1-t0, 3)} seconds\n")
 
 if __name__ == "__main__":
     #Easy sudoku
-    Sudoku("sudoku/easy.txt").solve(output_filename="easy_sol.png")
+    Sudoku("sudoku/easy.txt").solve(output_filename="sudoku/easy_sol.png")
     
     #medium sudoku
-    Sudoku("sudoku/medium.txt").solve(output_filename="medium_sol.png")
+    Sudoku("sudoku/medium.txt").solve(output_filename="sudoku/medium_sol.png")
 
     #hard sudoku
-    Sudoku("sudoku/hard.txt").solve(output_filename="hard_sol.png")
+    Sudoku("sudoku/hard.txt").solve(output_filename="sudoku/hard_sol.png")
 
     #very hard sudoku
-    Sudoku("sudoku/veryhard.txt").solve(output_filename="veryhard_sol.png")
+    Sudoku("sudoku/veryhard.txt").solve(output_filename="sudoku/veryhard_sol.png")
 
     #Map problem
     MapCSP().solve()
