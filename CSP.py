@@ -21,6 +21,7 @@ class CSP:
         self.solution = None #CSP solution after backtrack search
         self.backtracks_called = 0 #number of backtrack() function calls
         self.backtrack_failures = 0
+        self.progress = []
         
     def add_variable(self, name: str, domain: list):
         """Add a new variable to the CSP.
@@ -141,6 +142,8 @@ class CSP:
         # side effects elsewhere.
         assignment = copy.deepcopy(self.domains)
 
+        self.progress.append(number_of_completed_variables(assignment))#initial number of non completed variables
+
         # Run AC-3 on all constraints in the CSP, to weed out all of the
         # values that are not arc-consistent to begin with
         self.inference(assignment, self.get_all_arcs())
@@ -167,6 +170,7 @@ class CSP:
 
         """
         self.backtracks_called += 1 #function called
+        self.progress.append(number_of_completed_variables(assignment))
 
         if all(len(values) == 1 for values in assignment.values()):
             return assignment  # Return the completed assignment
@@ -219,9 +223,9 @@ class CSP:
                 if not assignment[i]:
                     return False  
 
-                for k in self.get_all_neighboring_arcs(i):
-                    if k[1] != j: 
-                        queue.append(k)
+                for n in self.get_all_neighboring_arcs(i):
+                    if n[1] != j: 
+                        queue.append(n)
         return True 
 
     def revise(self, assignment, i, j):
@@ -249,3 +253,8 @@ class CSP:
                 revised = True
 
         return revised
+
+def number_of_completed_variables(assignment):
+    #metric for how many completed values there are in the assignment
+    return sum([len(values) == 1 for values in assignment.values()])
+    #sums the number of True.

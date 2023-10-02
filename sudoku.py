@@ -40,14 +40,14 @@ class Sudoku(CSP):
                         cells.append('%d-%d' % (row, col))
                 self.add_all_different_constraint(cells)
 
-    def solve(self, output_filename): 
+    def solve(self, output_filename=None): 
         t0 = time.time()
         self.backtracking_search() #running backtrack search.
         t1 = time.time()
         
         print(f"\nsolution for {self.filename}\n") #printing and saving solution as image. 
         self.print_solution()
-        self.solution_as_img(output_filename)
+        if output_filename: self.solution_as_img(output_filename)
         print(f"backtracks called: {self.backtracks_called}")
         print(f"backtrack failures: {self.backtrack_failures}")
         print(f"compute time: {round(t1- t0,3)} seconds")
@@ -79,43 +79,43 @@ class Sudoku(CSP):
         output_filename : str
             The name of the output PNG file.
         """
-        assert self.solution, 'No solutions calculated. Run backtracking_search()'
-
-        # Create a blank image for the Sudoku grid
-        image_size = (270, 270)
-        cell_size = (30, 30)
+        #image init:
+        image_size = (540, 540)  # Increased image size for higher quality
+        cell_size = (60, 60)  # Increased cell size
         image = Image.new("RGB", image_size, "white")
         draw = ImageDraw.Draw(image)
 
-        font = ImageFont.load_default()
+        font_size = 34  # Choose a larger font size
+        font = ImageFont.truetype("sudoku/arial.ttf", font_size)  # Use a specific font with the desired size
 
         for row in range(9):
             for col in range(9):
                 cell_value = int(self.solution['%d-%d' % (row, col)][0])
 
-                #position of number:
-                x = col * cell_size[0] + 10
-                y = row * cell_size[1] + 10
+                # Position of number:
+                x = col * cell_size[0] + 20 
+                y = row * cell_size[1] + 20 
 
-                #draw number:
+                # Draw number:
                 draw.text((x, y), str(cell_value), fill="black", font=font)
 
         # Draw grid lines with thicker borders
-        line_width = 1  # Increase this value for thicker borders
-        border_width = 3
+        line_width = 1  # width of lines that are not borders
+        border_width = 8  # Border width
+        #vertical lines:
         for row in range(0, 10):
             line_y = row * cell_size[1]
             draw.line(
                 [(0, line_y), (image_size[0], line_y)],
-                fill="black" if row in [0, 3, 6, 9] else "grey",
+                fill="black",
                 width=border_width if row in [0, 3, 6, 9] else line_width,
             )
-
+        #horisontal lines
         for col in range(0, 10):
             line_x = col * cell_size[0]
             draw.line(
                 [(line_x, 0), (line_x, image_size[1])],
-                fill="black" if col in [0, 3, 6, 9] else "grey",
+                fill="black",
                 width=border_width if col in [0, 3, 6, 9] else line_width,
             )
 
@@ -134,3 +134,4 @@ if __name__ == "__main__":
 
     #very hard sudoku
     Sudoku("sudoku/veryhard.txt").solve(output_filename="sudoku/veryhard_sol.png")
+
