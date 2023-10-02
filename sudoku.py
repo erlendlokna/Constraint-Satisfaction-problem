@@ -122,38 +122,6 @@ class Sudoku(CSP):
         # Save the image
         image.save(output_filename)
 
-class MapCSP(CSP):
-    def __init__(self):
-        """
-        Instantiate a CSP representing the map coloring problem from the
-        textbook. This can be useful for testing your CSP solver as you
-        develop your code.
-
-        NB: Not related to Sudoku.
-        """
-        super().__init__()
-                
-        states = ['WA', 'NT', 'Q', 'NSW', 'V', 'SA', 'T']
-        edges = {'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
-                'NT': ['WA', 'Q'], 'NSW': ['Q', 'V']}
-        colors = ['red', 'green', 'blue']
-        for state in states:
-            self.add_variable(state, colors)
-        for state, other_states in edges.items():
-            for other_state in other_states:
-                self.add_constraint_one_way(state, other_state, lambda i, j: i != j)
-                self.add_constraint_one_way(other_state, state, lambda i, j: i != j)
-
-    def solve(self):
-        t0 = time.time()
-        self.backtracking_search()
-        t1 = time.time()
-        
-        print(f"solution: \n {self.solution}")
-        print(f"backtracks called: {self.backtracks_called}\n")
-        print(f"backtrack failures: {self.backtrack_failures}")
-        print(f"compute time {round(t1-t0, 3)} seconds\n")
-
 if __name__ == "__main__":
     #Easy sudoku
     Sudoku("sudoku/easy.txt").solve(output_filename="sudoku/easy_sol.png")
@@ -166,6 +134,3 @@ if __name__ == "__main__":
 
     #very hard sudoku
     Sudoku("sudoku/veryhard.txt").solve(output_filename="sudoku/veryhard_sol.png")
-
-    #Map problem
-    MapCSP().solve()
