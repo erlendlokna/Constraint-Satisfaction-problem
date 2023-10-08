@@ -1,6 +1,9 @@
 # Constraint-Satisfaction-problem
 
->Code for CSP found in CSP.py. Solver for Map problem and Sudoku found in Sudoku.py.
+>Code for CSP found in CSP.py.
+
+The abstract class CSP solves the general CSP problem given constrains and variables. The sudoku class inherites the CSP solver and attributes and creates sudoku based constraints.
+
 
 Run:
 ~~~
