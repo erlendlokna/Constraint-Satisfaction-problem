@@ -1,6 +1,4 @@
 # CSP Assignment
-# Original code by Håkon Måløy
-# Updated by Xavier Sánchez Díaz
 
 import copy
 from itertools import product as prod
